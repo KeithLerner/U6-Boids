@@ -1,0 +1,47 @@
+/* @settings
+name: Custom Line Length
+id: custom-line-length
+settings:
+    - 
+        id: max-line-width
+        title: Maximum Line Width
+        type: variable-number
+        default: 800
+        format: px
+*/
+
+body {
+    --custom-line-width: var(--max-line-width, 800px);
+}
+
+/* Custom line length for Obsidian when "Limit line length" is enabled */
+.is-readable-line-width .markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
+    /* Default container max-width when line length is limited */
+    max-width: var(--custom-line-width) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Adjust line length in editor when setting is enabled */
+.is-readable-line-width .cm-content {
+    max-width: var(--custom-line-width) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Ensure headers and other full-width elements respect the new line length */
+.is-readable-line-width .markdown-preview-view.is-readable-line-width {
+    --file-line-width: var(--custom-line-width) !important;
+}
+
+/* Fix for potential overflow issues */
+.markdown-source-view.is-readable-line-width .cm-contentContainer {
+    max-width: var(--custom-line-width) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Ensure line numbers align properly if enabled */
+.is-readable-line-width .cm-lineNumbers {
+    padding-right: 12px !important;
+}

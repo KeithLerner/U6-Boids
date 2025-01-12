@@ -1,0 +1,12 @@
+{
+  "immediateReplace": true,
+  "suggester": true,
+  "historyPriority": true,
+  "historyLimit": 100,
+  "history": [
+    ":smile:",
+    ":yellow_circle:",
+    ":white_check_mark:",
+    ":no_good:"
+  ]
+}

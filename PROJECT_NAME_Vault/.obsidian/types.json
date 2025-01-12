@@ -1,0 +1,23 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "Due-Date": "datetime",
+    "Time-Invested": "number",
+    "Time-Estimated": "number",
+    "Hours-Estimated": "number",
+    "Duration": "number",
+    "Sprint-Start": "datetime",
+    "Sprint-End": "datetime",
+    "Time-Start": "datetime",
+    "Time-End": "datetime",
+    "task": "text",
+    "discipline": "multitext",
+    "Assignee": "multitext",
+    "role": "text",
+    "Project-Start": "datetime",
+    "Project-End": "datetime",
+    "Blocks": "multitext"
+  }
+}
