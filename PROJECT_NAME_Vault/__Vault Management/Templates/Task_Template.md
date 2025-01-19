@@ -63,10 +63,11 @@ const workLogs = dv.pages("#ProjectManagement/WorkLogEntry")
 // Calculate hours per author
 const authorHours = {};
 workLogs.forEach(log => {
-    if (log["Author"] && log["Time-Start"] && log["Time-End"]) {
-        const hours = calculateHours(log["Time-Start"], log["Time-End"]);
-        authorHours[dv.page(log["Author"]).file.name] = (authorHours[log.Author] || 0) + hours;
-    }
+    if (!log["Author"] || !log["Time-Start"] || !log["Time-End"]) return
+
+	const hours = calculateHours(log["Time-Start"], log["Time-End"]);
+	const key = dv.page(log["Author"]).file.name;
+	authorHours[key] = (authorHours[key] || 0) + hours;
 });
 
 // Prepare data for the chart
