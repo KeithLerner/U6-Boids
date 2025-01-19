@@ -62,28 +62,24 @@ const workLogs = dv.pages("#ProjectManagement/WorkLogEntry")
 
 // Calculate hours per author
 const authorHours = {};
+const authorBorderColors = {};
+const authorBgColors = {};
 workLogs.forEach(log => {
     if (!log["Author"] || !log["Time-Start"] || !log["Time-End"]) return
 
+	const authorPage = dv.page(log["Author"]);
+
 	const hours = calculateHours(log["Time-Start"], log["Time-End"]);
-	const key = dv.page(log["Author"]).file.name;
+	const rgb = authorPage.rgb ?? '199, 199, 199';
+	const key = authorPage.file.name;
 	authorHours[key] = (authorHours[key] || 0) + hours;
+	authorBorderColors[key] = `rgba(${rgb}, 1)`;
+	authorBgColors[key] = `rgba(${rgb}, 0.8)`;
 });
 
 // Prepare data for the chart
 const authors = Object.keys(authorHours);
 const hours = authors.map(author => authorHours[author]);
-
-// Define colors for the pie chart
-const colors = [
-    'rgba(255, 99, 132, 0.8)',   // red
-    'rgba(54, 162, 235, 0.8)',   // blue
-    'rgba(255, 206, 86, 0.8)',   // yellow
-    'rgba(75, 192, 192, 0.8)',   // green
-    'rgba(153, 102, 255, 0.8)',  // purple
-    'rgba(255, 159, 64, 0.8)',   // orange
-    'rgba(199, 199, 199, 0.8)'   // gray
-];
 
 // Create chart configuration
 const chartData = {
@@ -92,8 +88,8 @@ const chartData = {
         labels: authors.map(author => `${author} (${authorHours[author].toFixed(1)}h)`),
         datasets: [{
             data: hours,
-            backgroundColor: colors.slice(0, authors.length),
-            borderColor: colors.slice(0, authors.length).map(color => color.replace('0.8', '1')),
+            backgroundColor: Object.values(authorBgColors),
+            borderColor: Object.values(authorBorderColors),
             borderWidth: 1
         }]
     },
