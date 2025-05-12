@@ -25,6 +25,8 @@ public class Boid : MonoBehaviour
         if (_manager == null)
             throw new NullReferenceException("Boid Manager instance not found");
         
+        FixToBounds();
+        
         List<Boid> neighbors = _manager.GetNeighbors(this, _manager.neighborRadius);
         
         Vector3 alignment  = Vector3.zero;
@@ -73,8 +75,8 @@ public class Boid : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.forward = Velocity;
-        //FixToBounds();
+        transform.forward =
+            Vector3.Slerp(transform.forward, Velocity.normalized, .5f);
     }
 
     private void FixToBounds()
