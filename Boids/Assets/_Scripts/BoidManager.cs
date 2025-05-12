@@ -1,19 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BoidManager : MonoBehaviour
 {
     public static BoidManager Instance { get; private set; }
-    
-    public enum Mode { V0, GridBins }
 
     [Header("System")] 
-    //public Mode mode;
     public GameObject boidPrefab;
     public Transform boidParent;
     public int spawnCount = 100;
@@ -29,8 +23,7 @@ public class BoidManager : MonoBehaviour
     public float weightSeparation = 1;
     public float weightAvoidEdges = 4;
     
-    public GridBins GridBins { get; private set; }
-    private List<Boid> _boids;
+    public GridBins<Boid> GridBins { get; private set; }
     
     // Start is called before the first frame update
     void Start()
@@ -41,9 +34,8 @@ public class BoidManager : MonoBehaviour
         if (boidPrefab == null)
             throw new NullReferenceException("No boid prefab provided");
 
-        GridBins = new GridBins(bounds, binsPerAxis);
-
-        _boids = new List<Boid>();
+        GridBins = new GridBins<Boid>(bounds, binsPerAxis);
+        
         for (int i = 0; i < spawnCount; i++)
         {
             Vector3 pos = new Vector3(
@@ -55,7 +47,11 @@ public class BoidManager : MonoBehaviour
                 boidParent);
             Boid boid = go.GetComponent<Boid>();
             boid.Init(this);
-            _boids.Add(boid);
+
+            Debug.DrawLine(pos, pos + Vector3.up, Color.green);
+            Vector3Int binIndex = GridBins.WorldPosToBinIndex(pos);
+            int arrayIndex = GridBins.BinIndexToArrayIndex(binIndex);
+            GridBins.Bins[arrayIndex].Add(boid);
         }
     }
 
@@ -63,19 +59,28 @@ public class BoidManager : MonoBehaviour
     {
         List<Boid> results = new();
 
-        if (_boids == null)
-            throw new NullReferenceException("Boids list not initialized");
-        
-        if (_boids.Count == 0) throw new Exception("No boids found");
-        
-        foreach (var b in _boids)
-        {
-            if (b == boid) continue;
+        if (GridBins == null)
+            throw new NullReferenceException("GridBins not initialized");
 
-            if (Vector3.Distance(b.transform.position,
-                    boid.transform.position) < radius)
+        if (GridBins.Bins.Length == 0) throw new Exception("No boids found");
+
+        Vector3 pos = boid.transform.position;
+        Vector3Int binIndex = GridBins.WorldPosToBinIndex(pos);
+        List<Vector3Int> searchBins = new List<Vector3Int>{ binIndex };
+        searchBins.AddRange(GridBins.GetNeighborBinIndices(binIndex));
+
+        foreach (Vector3Int bI in searchBins)
+        {
+            int arrayIndex = GridBins.BinIndexToArrayIndex(bI);
+            foreach (var b in GridBins.Bins[arrayIndex])
             {
-                results.Add(b);
+                if (b == boid) continue;
+
+                if (Vector3.Distance(b.transform.position,
+                        boid.transform.position) < radius)
+                {
+                    results.Add(b);
+                }
             }
         }
 

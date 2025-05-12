@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridBins
+public class GridBins<T>
 {
-    public List<Boid>[] Bins { get; private set; }
+    public List<T>[] Bins { get; private set; }
 
     /// <summary>
     /// Number of bins per axis.
@@ -21,7 +21,7 @@ public class GridBins
         
         BinSize = _bounds.size / BinDensity;
 
-        Bins = new List<Boid>[BinDensity * BinDensity * BinDensity];
+        Bins = new List<T>[BinDensity * BinDensity * BinDensity];
         for (int x = 0; x < BinDensity; x++)
         {
             for (int y = 0; y < BinDensity; y++)
@@ -29,7 +29,7 @@ public class GridBins
                 for (int z = 0; z < BinDensity; z++)
                 {
                     int i = x + y * BinDensity + z * BinDensity * BinDensity;
-                    Bins[i] = new List<Boid>();
+                    Bins[i] = new List<T>();
                 }
             }
         }

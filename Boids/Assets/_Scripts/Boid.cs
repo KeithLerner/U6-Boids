@@ -7,7 +7,9 @@ using Random = UnityEngine.Random;
 public class Boid : MonoBehaviour
 {
     private BoidManager _manager;
+    private int _owningGridArrayIndex;
     public Vector3 Velocity { get; private set; }
+    private GridBins<Boid> _bins;
     
     // Start is called before the first frame update
     void Start()
@@ -18,6 +20,7 @@ public class Boid : MonoBehaviour
     public void Init(BoidManager bm)
     {
         _manager = bm;
+        _bins = _manager.GridBins;
     }
 
     private void Update()
@@ -27,6 +30,19 @@ public class Boid : MonoBehaviour
         
         FixToBounds();
         
+        UpdateOwningGridBin();
+
+        Movement();
+    }
+
+    private void LateUpdate()
+    {
+        transform.forward =
+            Vector3.Slerp(transform.forward, Velocity.normalized, .5f);
+    }
+
+    private void Movement()
+    {
         List<Boid> neighbors = _manager.GetNeighbors(this, _manager.neighborRadius);
         
         Vector3 alignment  = Vector3.zero;
@@ -73,12 +89,6 @@ public class Boid : MonoBehaviour
         transform.position += Velocity * Time.deltaTime;
     }
 
-    private void LateUpdate()
-    {
-        transform.forward =
-            Vector3.Slerp(transform.forward, Velocity.normalized, .5f);
-    }
-
     private void FixToBounds()
     {
         Bounds bounds = _manager.bounds;
@@ -102,9 +112,21 @@ public class Boid : MonoBehaviour
         transform.position = newPos;
     }
 
+    private void UpdateOwningGridBin()
+    {
+        Vector3Int gridBinIndex =
+            _bins.WorldPosToBinIndex(transform.position);
+        int i = _bins.BinIndexToArrayIndex(gridBinIndex);
+        
+        if (i == _owningGridArrayIndex) return;
+
+        _bins.Bins[_owningGridArrayIndex].Remove(this);
+        _bins.Bins[i].Add(this);
+    }
+
     private void OnDrawGizmos()
     {
-        GridBins bins = _manager.GridBins;
+        GridBins<Boid> bins = _manager.GridBins;
         Vector3Int gridBinIndex =
             bins.WorldPosToBinIndex(transform.position);
 
@@ -120,7 +142,7 @@ public class Boid : MonoBehaviour
     
     private void OnDrawGizmosSelected()
     {
-        GridBins bins = _manager.GridBins;
+        GridBins<Boid> bins = _manager.GridBins;
         Vector3Int gridBinIndex =
             bins.WorldPosToBinIndex(transform.position);
         
