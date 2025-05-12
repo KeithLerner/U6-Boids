@@ -51,7 +51,6 @@ public class BoidManager : MonoBehaviour
                 Random.Range(bounds.min.y, bounds.max.y),
                 Random.Range(bounds.min.z, bounds.max.z));
 
-            boidParent ??= transform;
             GameObject go = Instantiate(boidPrefab, pos, Quaternion.identity,
                 boidParent);
             Boid boid = go.GetComponent<Boid>();
@@ -87,11 +86,15 @@ public class BoidManager : MonoBehaviour
     {
         Gizmos.color = new Color(0, 1, 1, .05f);
         Gizmos.DrawCube(bounds.center, bounds.size);
+        
+        GridBins?.OnDrawGizmos();
     }
     
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(bounds.center, bounds.size);
+        
+        GridBins?.OnDrawGizmosSelected();
     }
 }

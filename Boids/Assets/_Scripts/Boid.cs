@@ -102,11 +102,11 @@ public class Boid : MonoBehaviour
         transform.position = newPos;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         GridBins bins = _manager.GridBins;
         Vector3Int gridBinIndex =
-            bins.WorldPosToBinIndex(_manager.bounds, transform.position);
+            bins.WorldPosToBinIndex(transform.position);
 
         Vector3 binSize = bins.BinSize;
         Vector3 center = new Vector3(gridBinIndex.x * binSize.x,
@@ -116,6 +116,20 @@ public class Boid : MonoBehaviour
         
         Gizmos.color = new Color(1, 0, 0, .25f);
         Gizmos.DrawCube(center, binSize);
+    }
+    
+    private void OnDrawGizmosSelected()
+    {
+        GridBins bins = _manager.GridBins;
+        Vector3Int gridBinIndex =
+            bins.WorldPosToBinIndex(transform.position);
+        
+        Vector3 binSize = bins.BinSize;
+        Vector3 center = new Vector3(gridBinIndex.x * binSize.x,
+                             gridBinIndex.y * binSize.y,
+                             gridBinIndex.z * binSize.z) +
+                         bins.BinSize / 2;
+        
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(center, binSize);
     }

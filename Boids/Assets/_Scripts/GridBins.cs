@@ -4,18 +4,22 @@ using UnityEngine;
 public class GridBins
 {
     public List<Boid>[] Bins { get; private set; }
-    
+
     /// <summary>
     /// Number of bins per axis.
     /// </summary>
-    public int BinDensity { get; private set; }
-    
-    public Vector3 BinSize { get; private set; }
+    public readonly int BinDensity;
+
+    public readonly Vector3 BinSize;
+
+    private readonly Bounds _bounds;
 
     public GridBins(Bounds volume, int binDensity)
     {
         BinDensity = binDensity;
-        BinSize = volume.size / BinDensity;
+        _bounds = volume;
+        
+        BinSize = _bounds.size / BinDensity;
 
         Bins = new List<Boid>[BinDensity * BinDensity * BinDensity];
         for (int x = 0; x < BinDensity; x++)
@@ -38,9 +42,9 @@ public class GridBins
     /// <param name="worldPosition"> The query position. </param>
     /// <returns> -Vector3Int.one if invalid input given, otherwise returns a
     /// valid index to a bin in the grid. </returns>
-    public Vector3Int WorldPosToBinIndex(Bounds volume, Vector3 worldPosition)
+    public Vector3Int WorldPosToBinIndex(Vector3 worldPosition)
     {
-        if (!volume.Contains(worldPosition)) return -Vector3Int.one;
+        if (!_bounds.Contains(worldPosition)) return -Vector3Int.one;
 
         return new Vector3Int(
             Mathf.FloorToInt(worldPosition.x / BinSize.x),
@@ -87,15 +91,43 @@ public class GridBins
         return results;
     }
     
-    /*private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0, 1, 1, .05f);
-        Gizmos.DrawCube(bounds.center, bounds.size);
+        Gizmos.color = new Color(1, 1, 1, .05f);
+        
+        for (int x = 0; x < BinDensity; x++)
+        {
+            for (int y = 0; y < BinDensity; y++)
+            {
+                for (int z = 0; z < BinDensity; z++)
+                {
+                    Vector3 center = _bounds.min +
+                                     new Vector3(x * BinSize.x, y * BinSize.y,
+                                         z * BinSize.z) + BinSize / 2;
+                    
+                    Gizmos.DrawCube(center, BinSize);
+                }
+            }
+        }
     }
     
-    private void OnDrawGizmosSelected()
+    public void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(bounds.center, bounds.size);
-    }*/
+        Gizmos.color = Color.white;
+        
+        for (int x = 0; x < BinDensity; x++)
+        {
+            for (int y = 0; y < BinDensity; y++)
+            {
+                for (int z = 0; z < BinDensity; z++)
+                {
+                    Vector3 center = _bounds.min +
+                                     new Vector3(x * BinSize.x, y * BinSize.y,
+                                         z * BinSize.z) + BinSize / 2;
+                    
+                    Gizmos.DrawWireCube(center, BinSize);
+                }
+            }
+        }
+    }
 }
