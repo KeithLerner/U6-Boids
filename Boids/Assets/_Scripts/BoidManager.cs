@@ -15,19 +15,20 @@ public class BoidManager : MonoBehaviour
     [Header("System")] 
     //public Mode mode;
     public GameObject boidPrefab;
-    public int count;
+    public int spawnCount = 100;
     public Bounds bounds;
+    public int binsPerAxis = 10;
     
     [Header("Boid")]
-    public float speed = 5;
-    public float neighborRadius = 3;
+    public float speed = 8;
+    public float neighborRadius = 4;
     public float separationDistance = 1;
-    public float weightAlignment = 1;
+    public float weightAlignment = 2;
     public float weightCohesion = 1;
     public float weightSeparation = 1;
-    public float weightAvoidEdges = 1;
+    public float weightAvoidEdges = 4;
     
-    // Normal Boids
+    public GridBins GridBins { get; private set; }
     private List<Boid> _boids;
     
     // Start is called before the first frame update
@@ -39,8 +40,10 @@ public class BoidManager : MonoBehaviour
         if (boidPrefab == null)
             throw new NullReferenceException("No boid prefab provided");
 
+        GridBins = new GridBins(bounds, binsPerAxis);
+
         _boids = new List<Boid>();
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < spawnCount; i++)
         {
             Vector3 pos = new Vector3(
                 Random.Range(bounds.min.x, bounds.max.x),
