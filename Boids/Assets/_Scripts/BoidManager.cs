@@ -15,6 +15,7 @@ public class BoidManager : MonoBehaviour
     [Header("System")] 
     //public Mode mode;
     public GameObject boidPrefab;
+    public Transform boidParent;
     public int spawnCount = 100;
     public Bounds bounds;
     public int binsPerAxis = 10;
@@ -50,8 +51,9 @@ public class BoidManager : MonoBehaviour
                 Random.Range(bounds.min.y, bounds.max.y),
                 Random.Range(bounds.min.z, bounds.max.z));
 
+            boidParent ??= transform;
             GameObject go = Instantiate(boidPrefab, pos, Quaternion.identity,
-                transform);
+                boidParent);
             Boid boid = go.GetComponent<Boid>();
             boid.Init(this);
             _boids.Add(boid);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 
 public class GridBins
@@ -18,9 +17,6 @@ public class GridBins
         BinDensity = binDensity;
         BinSize = volume.size / BinDensity;
 
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine(BinDensity.ToString());
-
         Bins = new List<Boid>[BinDensity * BinDensity * BinDensity];
         for (int x = 0; x < BinDensity; x++)
         {
@@ -30,12 +26,9 @@ public class GridBins
                 {
                     int i = x + y * BinDensity + z * BinDensity * BinDensity;
                     Bins[i] = new List<Boid>();
-                    sb.AppendLine(i.ToString());
                 }
             }
         }
-        
-        Debug.Log(sb.ToString());
     }
 
     /// <summary>
@@ -53,6 +46,45 @@ public class GridBins
             Mathf.FloorToInt(worldPosition.x / BinSize.x),
             Mathf.FloorToInt(worldPosition.y / BinSize.y),
             Mathf.FloorToInt(worldPosition.z / BinSize.z));
+    }
+
+    public int BinIndexToArrayIndex(Vector3Int index)
+    {
+        return index.x + 
+               index.y * BinDensity +
+               index.z * BinDensity * BinDensity;
+    }
+
+    public Vector3Int ArrayIndexToBinIndex(int index)
+    {
+        int x = index % BinDensity;
+        int y = index / BinDensity % BinDensity;
+        int z = index / (BinDensity * BinDensity);
+
+        return new Vector3Int(x, y, z);
+    }
+
+    public List<Vector3Int> GetNeighborBinIndices(Vector3Int index)
+    {
+        List<Vector3Int> results = new List<Vector3Int>();
+        
+        for (int x = index.x - 1; x < index.x + 1; x++)
+        {
+            for (int y = index.y - 1; x < index.y + 1; y++)
+            {
+                for (int z = index.z - 1; x < index.z + 1; z++)
+                {
+                    // Check that modified index exists within grid space before
+                    // adding to results
+                    if (index.x < BinDensity - 2 && index.x > 0 &&
+                        index.y < BinDensity - 2 && index.y > 0 &&
+                        index.z < BinDensity - 2 && index.z > 0)
+                        results.Add(new Vector3Int(x, y, z));
+                }
+            }
+        }
+
+        return results;
     }
     
     /*private void OnDrawGizmos()
