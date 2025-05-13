@@ -38,7 +38,6 @@ public class GridBins<T>
     /// <summary>
     /// Convert a world position into a grid bin index coordinate.
     /// </summary>
-    /// <param name="volume"> The Bounds of the volume the grid occupies. </param>
     /// <param name="worldPosition"> The query position. </param>
     /// <returns> -Vector3Int.one if invalid input given, otherwise returns a
     /// valid index to a bin in the grid. </returns>
@@ -47,9 +46,9 @@ public class GridBins<T>
         if (!_bounds.Contains(worldPosition)) return -Vector3Int.one;
 
         return new Vector3Int(
-            Mathf.FloorToInt(worldPosition.x / BinSize.x),
-            Mathf.FloorToInt(worldPosition.y / BinSize.y),
-            Mathf.FloorToInt(worldPosition.z / BinSize.z));
+            Mathf.FloorToInt(.5f * BinDensity + worldPosition.x / BinSize.x),
+            Mathf.FloorToInt(.5f * BinDensity + worldPosition.y / BinSize.y),
+            Mathf.FloorToInt(.5f * BinDensity + worldPosition.z / BinSize.z));
     }
 
     public int BinIndexToArrayIndex(Vector3Int index)
@@ -72,11 +71,11 @@ public class GridBins<T>
     {
         List<Vector3Int> results = new List<Vector3Int>();
         
-        for (int x = index.x - 1; x < index.x + 1; x++)
+        for (int x = index.x - 1; x <= index.x + 1; x++)
         {
-            for (int y = index.y - 1; x < index.y + 1; y++)
+            for (int y = index.y - 1; y <= index.y + 1; y++)
             {
-                for (int z = index.z - 1; x < index.z + 1; z++)
+                for (int z = index.z - 1; z <= index.z + 1; z++)
                 {
                     // Check that modified index exists within grid space before
                     // adding to results
@@ -89,6 +88,20 @@ public class GridBins<T>
         }
 
         return results;
+    }
+
+    public void DebugBinOccupancy()
+    {
+        string results = "\n";
+        int occupied = 0;
+        for (var i = 0; i < Bins.Length; i++)
+        {
+            int c = Bins[i].Count;
+            bool o = c > 0;
+            results += $"{ArrayIndexToBinIndex(i)}: {c}";
+            if (o) occupied++;
+        }
+        Debug.Log($"<b>{occupied} Occupied</b>:{results}");
     }
     
     public void OnDrawGizmos()

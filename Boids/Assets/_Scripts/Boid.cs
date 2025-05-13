@@ -122,37 +122,6 @@ public class Boid : MonoBehaviour
 
         _bins.Bins[_owningGridArrayIndex].Remove(this);
         _bins.Bins[i].Add(this);
-    }
-
-    private void OnDrawGizmos()
-    {
-        GridBins<Boid> bins = _manager.GridBins;
-        Vector3Int gridBinIndex =
-            bins.WorldPosToBinIndex(transform.position);
-
-        Vector3 binSize = bins.BinSize;
-        Vector3 center = new Vector3(gridBinIndex.x * binSize.x,
-                             gridBinIndex.y * binSize.y,
-                             gridBinIndex.z * binSize.z) +
-                         bins.BinSize / 2;
-        
-        Gizmos.color = new Color(1, 0, 0, .25f);
-        Gizmos.DrawCube(center, binSize);
-    }
-    
-    private void OnDrawGizmosSelected()
-    {
-        GridBins<Boid> bins = _manager.GridBins;
-        Vector3Int gridBinIndex =
-            bins.WorldPosToBinIndex(transform.position);
-        
-        Vector3 binSize = bins.BinSize;
-        Vector3 center = new Vector3(gridBinIndex.x * binSize.x,
-                             gridBinIndex.y * binSize.y,
-                             gridBinIndex.z * binSize.z) +
-                         bins.BinSize / 2;
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(center, binSize);
+        _owningGridArrayIndex = i;
     }
 }
