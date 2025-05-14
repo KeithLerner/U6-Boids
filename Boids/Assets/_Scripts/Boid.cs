@@ -95,19 +95,19 @@ public class Boid : MonoBehaviour
         if (bounds.Contains(transform.position)) return;
         
         Vector3 newPos = transform.position;
-        if (transform.position.x > bounds.max.x)
-            newPos.x = bounds.min.x;
-        if (transform.position.y > bounds.max.y)
-            newPos.y = bounds.min.y;
-        if (transform.position.z > bounds.max.z)
-            newPos.z = bounds.min.z;
+        if (transform.position.x >= bounds.max.x)
+            newPos.x = bounds.min.x + 1;
+        if (transform.position.y >= bounds.max.y)
+            newPos.y = bounds.min.y + 1;
+        if (transform.position.z >= bounds.max.z)
+            newPos.z = bounds.min.z + 1;
                 
-        if (transform.position.x < bounds.min.x)
-            newPos.x = bounds.max.x;
-        if (transform.position.y < bounds.min.y)
-            newPos.y = bounds.max.y;
-        if (transform.position.z < bounds.min.z)
-            newPos.z = bounds.max.z;
+        if (transform.position.x <= bounds.min.x)
+            newPos.x = bounds.max.x - 1;
+        if (transform.position.y <= bounds.min.y)
+            newPos.y = bounds.max.y - 1;
+        if (transform.position.z <= bounds.min.z)
+            newPos.z = bounds.max.z - 1;
 
         transform.position = newPos;
     }

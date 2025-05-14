@@ -57,6 +57,13 @@ public class GridBins<T>
                index.y * BinDensity +
                index.z * BinDensity * BinDensity;
     }
+    
+    public int BinIndexToArrayIndex(int x, int y, int z)
+    {
+        return x + 
+               y * BinDensity +
+               z * BinDensity * BinDensity;
+    }
 
     public Vector3Int ArrayIndexToBinIndex(int index)
     {
@@ -106,14 +113,16 @@ public class GridBins<T>
     
     public void OnDrawGizmos()
     {
-        Gizmos.color = new Color(1, 1, 1, .05f);
-        
         for (int x = 0; x < BinDensity; x++)
         {
             for (int y = 0; y < BinDensity; y++)
             {
                 for (int z = 0; z < BinDensity; z++)
                 {
+                    float fill = 
+                        Bins[BinIndexToArrayIndex(x, y, z)].Count / 10f;
+                    Gizmos.color = new Color(1, 1, 1, fill + .001f);
+                    
                     Vector3 center = _bounds.min +
                                      new Vector3(x * BinSize.x, y * BinSize.y,
                                          z * BinSize.z) + BinSize / 2;

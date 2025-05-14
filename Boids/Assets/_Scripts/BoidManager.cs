@@ -39,16 +39,15 @@ public class BoidManager : MonoBehaviour
         for (int i = 0; i < spawnCount; i++)
         {
             Vector3 pos = new Vector3(
-                Random.Range(bounds.min.x, bounds.max.x),
-                Random.Range(bounds.min.y, bounds.max.y),
-                Random.Range(bounds.min.z, bounds.max.z));
+                Random.Range(bounds.min.x + 1, bounds.max.x - 1),
+                Random.Range(bounds.min.y + 1, bounds.max.y - 1),
+                Random.Range(bounds.min.z + 1, bounds.max.z - 1));
 
             GameObject go = Instantiate(boidPrefab, pos, Quaternion.identity,
                 boidParent);
             Boid boid = go.GetComponent<Boid>();
             boid.Init(this);
-
-            Debug.DrawLine(pos, pos + Vector3.up, Color.green);
+            
             Vector3Int binIndex = GridBins.WorldPosToBinIndex(pos);
             int arrayIndex = GridBins.BinIndexToArrayIndex(binIndex);
             GridBins.Bins[arrayIndex].Add(boid);
